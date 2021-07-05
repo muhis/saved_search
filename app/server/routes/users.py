@@ -1,7 +1,7 @@
 import beanie
-from server.models.search import SavedSearch
+from server.models.search import SavedSearch, SavedSearchIn
 from fastapi import APIRouter, HTTPException, Depends
-from server.models.user import User
+from server.models.user import User, UserIn
 from beanie import PydanticObjectId
 from typing import List
 
@@ -23,7 +23,8 @@ async def get_saved_search(saved_search_id: PydanticObjectId) -> SavedSearch:
 
 
 @users_router.post('/users/', response_model=User)
-async def create_user(user: User):
+async def create_user(user_in: UserIn):
+    user = User(**user_in.dict())
     await user.create()
     return user
 
@@ -43,5 +44,6 @@ async def list_searches(user_id: PydanticObjectId):
     return await SavedSearch.find_many({'user_id': user_id}).to_list()
 
 @users_router.post("/users/{user_id}/searches/", response_model=SavedSearch)
-async def create_saved_search(saved_search: SavedSearch, user: User =Depends(get_user)):
-    return await SavedSearch.crete()
+async def create_saved_search(saved_search_in: SavedSearchIn, user_id: PydanticObjectId):
+    saved_search = SavedSearch(**saved_search_in.dict(), user_id=user_id)
+    return await saved_search.create()

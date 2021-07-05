@@ -17,7 +17,11 @@ class SearchTerm(BaseModel):
     value: Any
 
 
-
-class SavedSearch(Document):
-    user_id: PydanticObjectId
+class SavedSearchIn(BaseModel):
     terms: List[SearchTerm]
+
+
+class SavedSearch(SavedSearchIn, Document):
+    user_id: PydanticObjectId
+    class Collection:
+        name = "saved-searches"

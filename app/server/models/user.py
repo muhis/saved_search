@@ -2,13 +2,15 @@ from beanie import Document
 from beanie.odm.fields import PydanticObjectId
 from pydantic import BaseModel, EmailStr
 from pydantic.fields import Field
-from bson.objectid import ObjectId
 
 
-class User(Document):
-    _id: PydanticObjectId = Field(default=ObjectId())
+class UserIn(BaseModel):
     display_name: str
     email_address: EmailStr
+    created_by_service: str
 
+
+class User(UserIn, Document):
+    created_by_service: str = Field(default="None")
     class Collection:
         name = "users"

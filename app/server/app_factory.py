@@ -7,6 +7,7 @@ from pydantic import BaseSettings
 # from routes import notes_router
 from server.routes.users import users_router
 from server.models.user import User
+from server.models.search import SavedSearch
 app = FastAPI()
 
 
@@ -33,7 +34,7 @@ async def app_init():
     )
 
     # INIT BEANIE
-    await init_beanie(client.beanie_db, document_models=[User])
+    await init_beanie(client.beanie_db, document_models=[User, SavedSearch])
 
 
     app.include_router(users_router, prefix="/v1", tags=["users"])
